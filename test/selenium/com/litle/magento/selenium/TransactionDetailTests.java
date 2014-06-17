@@ -17,6 +17,7 @@ public class TransactionDetailTests extends BaseTestCase {
     public void setUp() throws Exception {
         iAmDoingCCOrEcheckTransaction();
         iAmDoingPaypageTransaction();
+        clearCache();
     }
 
 	@Test

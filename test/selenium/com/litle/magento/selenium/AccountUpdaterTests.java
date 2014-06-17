@@ -11,6 +11,7 @@ public class AccountUpdaterTests extends BaseTestCase {
 
 	@Test
 	public void doASuccessfulAuthAndThenCaptureTheAuth() throws Exception {
+				
 		iAmDoingCCOrEcheckTransaction();
 		iAmDoingNonPaypageTransaction();
 		iAmDoingLitleAuth();
@@ -21,10 +22,12 @@ public class AccountUpdaterTests extends BaseTestCase {
 		iAmLoggedInAsAnAdministrator();
 		iView("Sales","Orders");
 		iClickOnTheTopRowInOrders();
-		WebElement e = driver.findElement(By.xpath("/html/body/div[2]/div[3]/div/div/div[2]/div/div[3]/div/div/div[8]/div/fieldset/table/tbody/tr[2]/td"));
+		WebElement e = driver.findElement(By.xpath("/html/body/div[2]/div[4]/div/div/div[2]/div/div[3]/div/div/div[8]/div/fieldset/table/tbody/tr[2]/td"));
 		assertEquals("Credit Card Number:", e.getText());
-		e = driver.findElement(By.xpath("/html/body/div[2]/div[3]/div/div/div[2]/div/div[3]/div/div/div[8]/div/fieldset/table/tbody/tr[2]/td[2]"));
+		e = driver.findElement(By.xpath("/html/body/div[2]/div[4]/div/div/div[2]/div/div[3]/div/div/div[8]/div/fieldset/table/tbody/tr[2]/td[2]"));
 		assertFalse(e.getText(),e.getText().contains("2000")); //the last 4 digits changed due to AU
 		iLogOutAsAdministrator();
+                
 	}
+
 }

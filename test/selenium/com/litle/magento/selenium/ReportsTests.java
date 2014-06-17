@@ -1,7 +1,6 @@
 package com.litle.magento.selenium;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -13,5 +12,8 @@ public class ReportsTests extends BaseTestCase {
 	    waitFor(By.linkText("sdksupport@litle.com"));
 	    String reportingUrl = driver.getCurrentUrl();
 	    assertEquals(reportingUrl, "https://www.testlitle.com/sandbox/ui/transactions/search");
+            driver.get("localhost/magento/index.php/admin");
+            driver.findElement(By.linkText("Log Out")).click();
+          
 	}
 }

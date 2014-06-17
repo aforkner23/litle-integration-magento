@@ -18,11 +18,13 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Assert.*;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -33,6 +35,7 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Select;
 
 public class BaseTestCase {
 
@@ -134,9 +137,57 @@ public class BaseTestCase {
         stmt.executeUpdate("delete from litle_failed_transactions");
         stmt.executeUpdate("delete from litle_customer_insight");
 
+	//registering Customer
+		driver.get("http://"+HOST+"/" + CONTEXT + "/index.php/");
+                waitForClassVisible("skip-account");
+		driver.findElement(By.linkText("ACCOUNT")).click();
+		driver.findElement(By.linkText("Register")).click();
+                waitForIdVisible("firstname");
+		WebElement e = driver.findElement(By.id("firstname"));
+		e.clear();
+		e.sendKeys("Dragon");
+		e= driver.findElement(By.id("lastname"));
+		e.clear();
+		e.sendKeys("Chinese");
+		e= driver.findElement(By.id("email_address"));
+		e.clear();
+		e.sendKeys("gdake@litle.com");
+		e= driver.findElement(By.id("password"));
+   		e.clear();
+		e.sendKeys("password");
+		e= driver.findElement(By.id("confirmation"));
+		e.clear();	
+		e.sendKeys("password");
+		driver.findElement(By.xpath("/html/body/div/div/div[2]/div/div/div/form/div[2]/button")).click();
+                waitForClassVisible("skip-account");	
+      		driver.findElement(By.linkText("ACCOUNT")).click();
+		waitFor(By.xpath("/html/body/div/div/header/div/div[5]/div/ul/li[5]/a"));
+		driver.findElement(By.linkText("Log Out")).click();	
+		//FileUtils.deleteDirectory(new File(MAGENTO_HOME+"/var/cache"));
+
+		
     }
 
-
+     public void clearCache() throws Exception{
+	//clear the cache	
+		BaseTestCase b = new BaseTestCase();
+		b.iAmLoggedInAsAnAdministrator();
+        	WebElement e = driver.findElement(By.xpath("/html/body/div/div/div[3]/ul/li[10]/a/span"));
+       	 	e.click();
+       	 	driver.findElement(By.xpath("/html/body/div/div/div[3]/ul/li[10]/ul/li[12]/a/span")).click();
+		waitFor(By.xpath("/html/body/div/div[4]/div/div[2]/table/tbody/tr/td[2]/button"));
+        	driver.findElement(By.xpath("/html/body/div/div[4]/div/div[2]/table/tbody/tr/td[2]/button")).click();
+        	waitForIdVisible("messages");
+		waitFor(By.xpath("/html/body/div/div[4]/div/div[2]/table/tbody/tr/td[2]/button[2]"));
+        	driver.findElement(By.xpath("/html/body/div/div[4]/div/div[2]/table/tbody/tr/td[2]/button[2]")).click();
+		Alert alert=driver.switchTo().alert(); 
+        	alert=driver.switchTo().alert(); 
+		alert.accept();
+        	waitForIdVisible("messages");
+        	//clear the cookie
+        	driver.manage().deleteAllCookies();
+		driver.findElement(By.linkText("Log Out")).click();
+	}
 
     @AfterClass
     public static void tearDownSuite() throws Exception {
@@ -145,7 +196,25 @@ public class BaseTestCase {
     }
 
     @After
-    public void after() {
+    public void after()  throws Exception{
+	BaseTestCase b = new BaseTestCase();
+        b.iAmLoggedInAsAnAdministrator();
+        
+        WebElement e = driver.findElement(By.xpath("/html/body/div/div/div[3]/ul/li[5]/a/span"));
+        e.click();
+        
+	driver.findElement(By.xpath("/html/body/div/div/div[3]/ul/li[5]/ul/li/a/span")).click();
+	e=driver.findElement(By.xpath("//*[contains(text(), 'gdake@litle.com')]"));		
+	e.click();
+        
+	e=driver.findElement(By.className("delete"));		
+	e.click();
+        
+	Alert alert=driver.switchTo().alert(); 
+	alert.accept(); // it will click on OK button	
+	waitFor(By.xpath("/html/body/div/div/div/div/p/a[2]"));
+	driver.findElement(By.linkText("Log Out")).click();
+      	clearCache();
         driver.quit();
     }
 
@@ -198,6 +267,8 @@ public class BaseTestCase {
         driver.get("http://"+HOST+"/" + CONTEXT + "/index.php/");
 
         //Get to login screen
+        waitForClassVisible("skip-account");
+        driver.findElement(By.linkText("ACCOUNT")).click();
         driver.findElement(By.linkText("Log In")).click();
         waitForIdVisible("email");
 
@@ -238,8 +309,8 @@ public class BaseTestCase {
         e.sendKeys(productName);
 
         //Hit the search button
-        e = driver.findElement(By.className("form-search"));
-        e = e.findElement(By.tagName("button"));
+        e = driver.findElement(By.className("search-button"));
+        //e = e.findElement(By.tagName("button"));
         e.click();
         waitForCssVisible(".btn-cart");
 
@@ -257,7 +328,7 @@ public class BaseTestCase {
     void iClickOnTheTopRowInOrders() throws Exception {
         WebElement ordersGrid = driver.findElement(By.id("sales_order_grid_table"));
         WebElement topRow = ordersGrid.findElement(By.tagName("tbody")).findElement(By.tagName("tr"));
-        //WebElement topRow = driver.findElement(By.xpath("/html/body/div/div[3]/div/div[3]/div/div[2]/div/table/tbody/tr[1]"));
+     
         String title = topRow.getAttribute("title");
         driver.get(title);
 
@@ -277,9 +348,6 @@ public class BaseTestCase {
     }
 
     void iAddTheTopRowInProductsToTheOrder() {
-//        WebElement topRow = driver.findElement(By.xpath("/html/body/div/div[3]/div/form/div[5]/div/div/table/tbody/tr/td[2]/div[2]/div/div[2]/div/div/div/table/tbody/tr"));
-//        topRow.click();
-//        waitFor(By.cssSelector("html body#html-body.adminhtml-sales-order-create-index div.wrapper div#anchor-content.middle div#page:main-container form#edit_form div#order-data div div.page-create-order table tbody tr td.main-col div#order-items div div.entry-edit div table tbody tr td.a-right button .scalable"));
         WebElement productsTable = driver.findElement(By.id("sales_order_create_search_grid_table"));
         productsTable.findElement(By.tagName("tbody")).findElement(By.tagName("tr")).click(); //Clicking the top row sets the qtyToAdd to 1
         WebElement e = driver.findElement(By.id("order-search"));
@@ -428,9 +496,32 @@ public class BaseTestCase {
         WebElement e = driver.findElement(By.className("btn-proceed-checkout"));
         e.click();
         waitForIdVisible("co-billing-form");
-
+	
         //And I press "Continue"
         e = driver.findElement(By.id("co-billing-form"));
+        WebElement address=driver.findElement(By.id("billing:street1"));
+        address.clear();
+        address.sendKeys("19 Summer Street");
+        
+    //    WebElement state=driver.findElement(By.id("billing:region_id"));
+     //   state.click();
+       Select select = new Select(driver.findElement(By.id("billing:region_id")));
+	//select.deselectAll();
+	select.selectByVisibleText("Alaska");
+
+        
+        WebElement zip=driver.findElement(By.id("billing:postcode"));
+        zip.clear();
+        zip.sendKeys("45565");
+                
+        WebElement city=driver.findElement(By.id("billing:city"));
+        city.clear();
+        city.sendKeys("Dragon");
+       
+        WebElement tel=driver.findElement(By.id("billing:telephone"));
+        tel.clear();
+        tel.sendKeys("Dragon");  
+        
         e = e.findElement(By.tagName("button"));
         e.click();
         waitForIdVisible("co-shipping-method-form");
@@ -500,14 +591,70 @@ public class BaseTestCase {
     void iCheckOutWith(String ccType, String creditCardNumber) {
         iCheckOutWith(ccType, creditCardNumber, false);
     }
+    void iCheckOutWithstoredAddress(String ccType, String creditCardNumber, boolean saveCreditCard){
+        WebElement e = driver.findElement(By.className("btn-proceed-checkout"));
+        e.click();
+        waitForIdVisible("co-billing-form");
+        e= driver.findElement(By.xpath("/html/body/div/div/div[2]/div/div/ol/li/div[2]/form/div/div/button"));
+        e.click();
+        waitForIdVisible("co-shipping-method-form");
+        //And I press the "3rd" continue button - Shipping Method
+        e = driver.findElement(By.id("co-shipping-method-form"));
+        e = e.findElement(By.tagName("button"));
+        e.click();
+        waitForIdVisible("co-payment-form");
+
+        //And I choose "CreditCard"
+        e = driver.findElement(By.id("p_method_creditcard"));
+        e.click();
+        waitForIdVisible("creditcard_cc_type");
+
+        if(creditCardNumber.startsWith("Stored")) {
+            iSelectFromSelect(creditCardNumber, "creditcard_cc_vaulted");
+        }
+        else {
+            //And I select "Visa" from "Credit Card Type"
+            iSelectFromSelect(ccType, "creditcard_cc_type");
+
+            e = driver.findElement(By.id("creditcard_cc_number"));
+            e.clear();
+            e.sendKeys(creditCardNumber);
+            iSelectFromSelect("09 - September", "creditcard_expiration");
+            iSelectFromSelect("2015", "creditcard_expiration_yr");
+            }        
+        e = driver.findElement(By.id("creditcard_cc_cid"));
+        e.clear();
+        e.sendKeys("123");
+
+        if(saveCreditCard) {
+            e = driver.findElement(By.id("creditcard_cc_should_save"));
+            e.click();
+        }
+
+        //And I press the "4th" continue button
+        e = driver.findElement(By.id("payment-buttons-container"));
+        e = e.findElement(By.tagName("button"));
+        e.click();
+        waitForIdVisible("checkout-step-review");
+
+        //And I press "Place Order"
+        e = driver.findElement(By.id("review-buttons-container"));
+        e = e.findElement(By.tagName("button"));
+        e.click();
+         waitForCssVisible("html body.checkout-onepage-success div.wrapper div.page div.main-container div.main div.col-main p a");
+        e = driver.findElement(By.className("col-main"));
+        e = e.findElement(By.className("sub-title"));
+        assertEquals("THANK YOU FOR YOUR PURCHASE!",e.getText());
+
+    }
 
     void iCheckOutWith(String ccType, String creditCardNumber, boolean saveCreditCard) {
         baseCheckoutHelper(ccType, creditCardNumber, saveCreditCard);
-        //	    Then I should see "Thank you for your purchase"
+        //Then I should see "Thank you for your purchase"
         waitForCssVisible("html body.checkout-onepage-success div.wrapper div.page div.main-container div.main div.col-main p a");
         WebElement e = driver.findElement(By.className("col-main"));
         e = e.findElement(By.className("sub-title"));
-        assertEquals("Thank you for your purchase!",e.getText());
+        assertEquals("THANK YOU FOR YOUR PURCHASE!",e.getText());
     }
 
     void iCheckOutWithEcheck(String routingNumber, String accountNumber, String accountType) {
@@ -518,17 +665,43 @@ public class BaseTestCase {
 
         //And I press "Continue"
         e = driver.findElement(By.id("co-billing-form"));
+
+	 WebElement address=driver.findElement(By.id("billing:street1"));
+        address.clear();
+        address.sendKeys("19 Summer Street");
+        
+    //    WebElement state=driver.findElement(By.id("billing:region_id"));
+     //   state.click();
+       Select select = new Select(driver.findElement(By.id("billing:region_id")));
+	//select.deselectAll();
+	select.selectByVisibleText("Alaska");
+
+        
+        WebElement zip=driver.findElement(By.id("billing:postcode"));
+        zip.clear();
+        zip.sendKeys("45565");
+                
+        WebElement city=driver.findElement(By.id("billing:city"));
+        city.clear();
+        city.sendKeys("Dragon");
+       
+        WebElement tel=driver.findElement(By.id("billing:telephone"));
+        tel.clear();
+        tel.sendKeys("Dragon");  
+
+
         e = e.findElement(By.tagName("button"));
         e.click();
         waitForIdVisible("co-shipping-method-form");
 
-        //	      And I press the "3rd" continue button - Shipping Method
+        //And I press the "3rd" continue button - Shipping Method
         e = driver.findElement(By.id("co-shipping-method-form"));
         e = e.findElement(By.tagName("button"));
         e.click();
         waitForIdVisible("co-payment-form");
 
-        //And I choose "Echeck"
+        //And I choose "Echeck" 
+	waitForIdVisible("p_method_lecheck");
         e = driver.findElement(By.id("p_method_lecheck"));
         e.click();
         waitForIdVisible("lecheck_echeck_routing_number");
@@ -543,26 +716,31 @@ public class BaseTestCase {
 
         iSelectFromSelect(accountType, "lecheck_echeck_account_type");
 
-        //	      And I press the "4th" continue button
+        //And I press the "4th" continue button
         e = driver.findElement(By.id("payment-buttons-container"));
         e = e.findElement(By.tagName("button"));
         e.click();
         waitForIdVisible("checkout-step-review");
 
-        //	      And I press "Place Order"
+        //And I press "Place Order"
         e = driver.findElement(By.id("review-buttons-container"));
         e = e.findElement(By.tagName("button"));
         e.click();
 
-        //	    Then I should see "Thank you for your purchase"
+        //Then I should see "Thank you for your purchase"
         waitForCssVisible("html body.checkout-onepage-success div.wrapper div.page div.main-container div.main div.col-main p a");
         e = driver.findElement(By.className("col-main"));
         e = e.findElement(By.className("sub-title"));
-        assertEquals("Thank you for your purchase!",e.getText());
+        assertEquals("THANK YOU FOR YOUR PURCHASE!",e.getText());
     }
 
     void iLogOutAsUser() {
+        waitForClassVisible("skip-account");
+        driver.findElement(By.linkText("ACCOUNT")).click();
+	waitFor(By.xpath("/html/body/div/div/header/div/div[5]/div/ul/li[5]/a"));
         driver.findElement(By.linkText("Log Out")).click();
+        waitForClassVisible("skip-account");
+        driver.findElement(By.linkText("ACCOUNT")).click();
         waitFor(By.partialLinkText("Log In"));
     }
 
@@ -596,6 +774,7 @@ public class BaseTestCase {
                 invoiceButton = button;
             }
         }
+      
         assertNotNull("Couldn't find invoice button", invoiceButton);
         waitFor(By.id(invoiceButton.getAttribute("id")));
         invoiceButton.click();
@@ -760,11 +939,11 @@ public class BaseTestCase {
         }
         assertNotNull(invoiceLink);
         invoiceLink.click();
-        waitFor(By.id("order_invoices"));
+        waitFor(By.id("order_invoices_table"));
     }
 
     void iClickOnTheTopRowInInvoices() {
-        String url = driver.findElement(By.xpath("/html/body/div[2]/div[3]/div/div/div[2]/div/div[3]/div[2]/div/div/div/table/tbody/tr")).getAttribute("title");
+        String url = driver.findElement(By.xpath("/html/body/div[2]/div[4]/div/div/div[2]/div/div[3]/div[2]/div/div/div/table/tbody/tr")).getAttribute("title");
         driver.get(url);
         waitFor(By.id("comments_block"));
     }
@@ -809,6 +988,7 @@ public class BaseTestCase {
         }
         assertNotNull("Couldn't find submit order button", submitOrderButton);
         submitOrderButton.click();
+	 waitFor(By.id("messages"));
         waitForIdVisible("messages");
     }
 

@@ -78,5 +78,6 @@ public class CustomerInformationTests extends BaseTestCase {
 		waitFor(By.id("my_custom_tab"));
 		iShouldSeeInTheColumnInCustomerInsights("BRA","Issuing Country");
 		iLogOutAsAdministrator();
+              
 	}
 }

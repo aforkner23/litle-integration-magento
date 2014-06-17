@@ -1,12 +1,13 @@
 package com.litle.magento.selenium;
 
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.NoSuchElementException;
+import static org.junit.Assert.assertEquals;
+import org.openqa.selenium.support.ui.Select;
 
 public class PayPageTransactionsTests extends BaseTestCase {
 
@@ -14,33 +15,17 @@ public class PayPageTransactionsTests extends BaseTestCase {
     public void setUp() throws Exception {
         iAmDoingCCOrEcheckTransaction();
         iAmDoingPaypageTransaction();
+	iAmDoingLitleSale();
     }
-@Test public void testFoo() {}
-/*
-	@Test
-	public void doASuccessfulAuthAndThenCaptureTheAuth() throws Exception {
-	    iAmDoingLitleAuth();
-	    iAmLoggedInAsWithThePassword("gdake@litle.com", "password");
-	    iHaveInMyCart("vault");
-	    iCheckOutWith("Visa", "4100000000000001");
-	    iLogOutAsUser();
 
-	    iAmLoggedInAsAnAdministrator();
-	    iView("Sales", "Orders");
-	    iClickOnTheTopRowInOrders();
-	    iPressInvoice();
-	    iSelectNameFromSelect("Capture Online", "invoice[capture_case]");
-	    iPressSubmitInvoice("The invoice has been created.", null);
-	    iLogOutAsAdministrator();
-	}
-*/
-/*
+
 	@Test
 	public void backendPaypageAuthCheckoutThenAttemptCapture() throws Exception {
-	    iAmDoingLitleAuth();
-	    iAmLoggedInAsAnAdministrator();
-	    iView("Sales", "Orders");
-	    iPressCreateNewOrder();
+	iAmDoingLitleAuth();
+        clearCache();
+	iAmLoggedInAsAnAdministrator();
+	iView("Sales", "Orders");
+	iPressCreateNewOrder();	
         iClickOnTheCustomerWithEmail("gdake@litle.com");
         iClickAddProducts();
         iAddTheTopRowInProductsToTheOrder();
@@ -57,20 +42,47 @@ public class PayPageTransactionsTests extends BaseTestCase {
         assertEquals("https://reports.litle.com/ui/vt", url);
 
         driver.findElement(By.id("order-comment")).click();
+	//adding shipping-address details
+	e=driver.findElement(By.id("order-billing_address_firstname"));	
+	e.clear();
+	e.sendKeys("Dragon");
+	
+	e=driver.findElement(By.id("order-billing_address_lastname"));	
+	e.clear();
+	e.sendKeys("Dragon");
+	
+	e=driver.findElement(By.id("order-billing_address_street0"));	
+	e.clear();
+	e.sendKeys("Dragon");
 
-        //And I configure shipping method
+	e=driver.findElement(By.id("order-billing_address_city"));	
+	e.clear();
+	e.sendKeys("Dragon");
+
+	e=driver.findElement(By.id("order-billing_address_postcode"));	
+	e.clear();
+	e.sendKeys("123");
+
+	e=driver.findElement(By.id("order-billing_address_telephone"));	
+	e.clear();
+	e.sendKeys("123456");
+
+	Select select = new Select(driver.findElement(By.id("order-billing_address_region_id")));
+	select.selectByVisibleText("Alaska");
+        
+	//And I configure shipping method
         waitFor(By.id("order-shipping-method-summary"));
-        driver.findElement(By.id("order-shipping-method-summary")).click();
-        waitForIdVisible("s_method_flatrate_flatrate");
+        driver.findElement(By.linkText("Get shipping methods and rates")).click();
+	waitForIdVisible("s_method_flatrate_flatrate");
         driver.findElement(By.id("s_method_flatrate_flatrate")).click();
-        driver.findElement(By.id("order-comment")).click();
+	
+	driver.findElement(By.id("order-comment")).click();
 
-        iPressSubmitOrder();
+	iPressSubmitOrder();
 
         iView("Sales", "Orders");
         iClickOnTheTopRowInOrders();
         iPressInvoice();
-
         iPressSubmitInvoice("This order was placed using Litle Virtual Terminal. Please process the capture by logging into Litle Virtual Terminal (https://reports.litle.com).", null);
         iLogOutAsAdministrator();
 	}
@@ -83,13 +95,5 @@ public class PayPageTransactionsTests extends BaseTestCase {
 //        iLogOutAsUser();
 //    }
 //
-*/
-    @Test
-    public void doASucessfullSale() throws Exception {
-        iAmDoingLitleSale();
-        iAmLoggedInAsWithThePassword("gdake@litle.com", "password");
-        iHaveInMyCart("vault");
-        iCheckOutWith("Visa", "4100000000000001");
-        iLogOutAsUser();
-    }
+
 }

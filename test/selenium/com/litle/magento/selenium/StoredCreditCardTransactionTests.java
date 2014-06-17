@@ -18,6 +18,7 @@ public class StoredCreditCardTransactionTests extends BaseTestCase {
     public void setUp() throws Exception {
         iAmDoingCCOrEcheckTransaction();
         iAmDoingStoredCards();
+        clearCache();
     }
 
 	@Test
@@ -27,16 +28,17 @@ public class StoredCreditCardTransactionTests extends BaseTestCase {
 	    iHaveInMyCart("vault");
 	    iCheckOutWith("Visa", "4100280190123000", true);
         iHaveInMyCart("vault");
-        iCheckOutWith("Visa", "Stored Visa Ending in: 3000");
+        iCheckOutWithstoredAddress("Visa", "Stored Visa Ending in: 3000",false);
 
         theVaultTableHas("3000", "%3000", "VI", "410028");
 
         //Verify my account lists the card
         //Click My Account
+        driver.findElement(By.linkText("ACCOUNT")).click();
         driver.findElement(By.linkText("My Account")).click();
-        waitFor(By.linkText("Stored Credit Cards"));
+        waitFor(By.linkText("STORED CREDIT CARDS"));
         //Click stored credit cards
-        driver.findElement(By.linkText("Stored Credit Cards")).click();
+        driver.findElement(By.linkText("STORED CREDIT CARDS")).click();
         //Check the text of the box
         WebElement infoBox = driver.findElement(By.className("info-box"));
         String infoText = infoBox.getText();
@@ -70,16 +72,17 @@ System.out.println("TEST RUNS");
 	    iCheckOutWith("American Express", "370028010000001", true);
 
         iHaveInMyCart("vault");
-        iCheckOutWith("American Express", "Stored American Express Ending in: 0001");
+        iCheckOutWithstoredAddress("American Express", "Stored American Express Ending in: 0001",false);
 
         theVaultTableHas("0001", "%0001", "AE", "370028");
 
         //Verify my account lists the card
         //Click My Account
+        driver.findElement(By.linkText("ACCOUNT")).click();
         driver.findElement(By.linkText("My Account")).click();
-        waitFor(By.linkText("Stored Credit Cards"));
+        waitFor(By.linkText("STORED CREDIT CARDS"));
         //Click stored credit cards
-        driver.findElement(By.linkText("Stored Credit Cards")).click();
+        driver.findElement(By.linkText("STORED CREDIT CARDS")).click();
         //Check the text of the box
         WebElement infoBox = driver.findElement(By.className("info-box"));
         String infoText = infoBox.getText();

@@ -1,21 +1,22 @@
 package com.litle.magento.selenium;
 
 import java.sql.ResultSet;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public class BackendEcheckTransactionsTests extends BaseTestCase {
-
+     
 	@Before
 	public void background() throws Exception {
 		iAmDoingLitleSale();
 		iAmDoingCCOrEcheckTransaction();
 		iAmDoingNonPaypageTransaction();
+		clearCache();
 	}
-
+  
 	@Test
 	public void attemptAFailedVoidSale() throws Exception {
+         	
 		iAmLoggedInAsWithThePassword("gdake@litle.com", "password");
 		iHaveInMyCart("vault");
 		iCheckOutWithEcheck("053100300", "13131313","Checking");
@@ -46,7 +47,7 @@ public class BackendEcheckTransactionsTests extends BaseTestCase {
 		iPressSubmitInvoice("The invoice has been created.", "Captured amount of $6.99 online.");
 		iLogOutAsAdministrator();
 	}
-
+      
 	@Test
 	public void successfulCheckoutThenRefundThenVoidRefund() throws Exception {
 		iAmLoggedInAsWithThePassword("gdake@litle.com", "password");
@@ -63,6 +64,7 @@ public class BackendEcheckTransactionsTests extends BaseTestCase {
 		iPressRefund("The credit memo has been created.");
 		iPressVoidRefund("The payment has been voided.");
 		iLogOutAsAdministrator();
+              
 	}
-
+   
 }

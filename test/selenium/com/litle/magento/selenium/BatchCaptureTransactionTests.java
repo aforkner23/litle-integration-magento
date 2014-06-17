@@ -27,9 +27,11 @@ public class BatchCaptureTransactionTests extends BaseTestCase {
 		iHaveInMyCart("vault");
 		iCheckOutWith("Visa","4100000000000001");
 		iHaveInMyCart("vault");
-		iCheckOutWith("Visa","4100000000000001");
+                //use the stored address to purchase again
+                iCheckOutWithstoredAddress("Visa","4100000000000001",false);
+		//iCheckOutWith("Visa","4100000000000001");
 		iHaveInMyCart("vault");
-		iCheckOutWith("Visa","4100000000000001");
+		iCheckOutWithstoredAddress("Visa","4100000000000001",false);
 		iLogOutAsUser();
 
 		iAmLoggedInAsAnAdministrator();

@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class BackendCCTransactionsTests extends BaseTestCase {
-
+       
 	@Before
 	public void background() throws Exception {
 		iAmDoingCCOrEcheckTransaction();
@@ -31,7 +31,7 @@ public class BackendCCTransactionsTests extends BaseTestCase {
 		iPressVoidCapture("Transaction Not Voided - Already Settled. This transaction cannot be voided; it has already been delivered to the card networks. You may want to try a refund instead.For your reference, the transaction id is \\d+");
 		iLogOutAsAdministrator();
 	}
-	
+
 	@Test
 	public void doAVoidCaptureAndThenCaptureAgain() throws Exception {
 		iAmDoingLitleAuth();
@@ -90,7 +90,7 @@ public class BackendCCTransactionsTests extends BaseTestCase {
 		iPressCancel("The order has been cancelled.");
 		iLogOutAsAdministrator();
 	}
-
+         
 	@Test
 	public void doASuccessfulAuthCheckoutAndThenReverseTheAuth() throws Exception {
 		iAmDoingLitleAuth();
@@ -105,6 +105,7 @@ public class BackendCCTransactionsTests extends BaseTestCase {
 		iClickOnTheTopRowInOrders();
 		iPressAuthReversal("The payment has been voided.");
 		iLogOutAsAdministrator();
+                
 	}
 	
 }
