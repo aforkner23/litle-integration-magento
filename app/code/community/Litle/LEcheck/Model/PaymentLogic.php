@@ -1,6 +1,19 @@
 <?php
-require_once('Litle/LitleSDK/LitleOnline.php');
-
+//namespace litle\sdk;
+use litle\sdk;
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/LitleOnlineRequest.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/LitleXmlMapper.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/XmlParser.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/BatchRequest.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/Checker.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/Communication.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/LitleOnline.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/LitleRequest.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/LitleResponseProcessor.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/Obj2xml.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/Transactions.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/UrlMapper.php');
+include_once('/usr/local/litle-home/twang/git/litle-integration-magento/vendor/litle/payments-sdk/litle/sdk/XmlFields.php');
 class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstract
 {
 	/**
@@ -186,11 +199,11 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 	}
 
 	public function processResponse(Varien_Object $payment,$litleResponse){
-		$message = XmlParser::getAttribute($litleResponse,'litleOnlineResponse','message');
+		$message = sdk\XmlParser::getAttribute($litleResponse,'litleOnlineResponse','message');
 		if ($message == "Valid Format"){
 			if( isset($litleResponse))
 			{
-				$litleResponseCode = XMLParser::getNode($litleResponse,'response');
+				$litleResponseCode = sdk\XMLParser::getNode($litleResponse,'response');
 				if($litleResponseCode != "000")
 				{
 				if(($litleResponseCode === "362") && Mage::helper("creditcard")->isStateOfOrderEqualTo($payment->getOrder(), Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE))
@@ -201,11 +214,11 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 					{
 						$payment
 						->setStatus("Rejected")
-						->setCcTransId(XMLParser::getNode($litleResponse,'litleTxnId'))
-						->setLastTransId(XMLParser::getNode($litleResponse,'litleTxnId'))
-						->setTransactionId(XMLParser::getNode($litleResponse,'litleTxnId'))
+						->setCcTransId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
+						->setLastTransId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
+						->setTransactionId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
 						->setIsTransactionClosed(0)
-						->setTransactionAdditionalInfo("additional_information", XMLParser::getNode($litleResponse,'message'));
+						->setTransactionAdditionalInfo("additional_information", sdk\XMLParser::getNode($litleResponse,'message'));
 							
 						throw new Mage_Payment_Model_Info_Exception(Mage::helper('core')->__("Transaction was not approved. Contact us or try again later."));
 					}
@@ -214,11 +227,11 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 				{
 					$payment
 					->setStatus("Approved")
-					->setCcTransId(XMLParser::getNode($litleResponse,'litleTxnId'))
-					->setLastTransId(XMLParser::getNode($litleResponse,'litleTxnId'))
-					->setTransactionId(XMLParser::getNode($litleResponse,'litleTxnId'))
+					->setCcTransId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
+					->setLastTransId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
+					->setTransactionId(sdk\XMLParser::getNode($litleResponse,'litleTxnId'))
 					->setIsTransactionClosed(0)
-					->setTransactionAdditionalInfo("additional_information", XMLParser::getNode($litleResponse,'message'));
+					->setTransactionAdditionalInfo("additional_information", sdk\XMLParser::getNode($litleResponse,'message'));
 				}
 				return $this;
 			}
@@ -249,7 +262,7 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 			);
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash,$merchantData);
-			$litleRequest = new LitleOnlineRequest();
+			$litleRequest = new sdk\LitleOnlineRequest();
 			$litleResponse = $litleRequest->echeckVerificationRequest($hash_in);
 			$this->processResponse($payment,$litleResponse);
 		}
@@ -277,7 +290,7 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 			);
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash,$merchantData);
-			$litleRequest = new LitleOnlineRequest();
+			$litleRequest = new sdk\LitleOnlineRequest();
 			$litleResponse = $litleRequest->echeckSaleRequest($hash_in);
 		}
 		$this->processResponse($payment,$litleResponse);
@@ -300,7 +313,7 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 			
 				$merchantData = $this->merchantData($payment);
 				$hash_in = array_merge($hash,$merchantData);
-				$litleRequest = new LitleOnlineRequest();
+				$litleRequest = new sdk\LitleOnlineRequest();
 				$litleResponse = $litleRequest->echeckCreditRequest($hash_in);
 			}
 			
@@ -320,7 +333,7 @@ class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstrac
 			);
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash,$merchantData);
-			$litleRequest = new LitleOnlineRequest();
+			$litleRequest = new sdk\LitleOnlineRequest();
 			$litleResponse = $litleRequest->echeckVoidRequest($hash_in);
 		}
 		$this->processResponse($payment,$litleResponse);
