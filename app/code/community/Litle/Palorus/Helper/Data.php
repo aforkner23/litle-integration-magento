@@ -1,5 +1,5 @@
 <?php
-use litle\sdk;
+//use litle\sdk;
 class Litle_Palorus_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
@@ -14,19 +14,19 @@ class Litle_Palorus_Helper_Data extends Mage_Core_Helper_Abstract
 		$last4 = $matches[1];
 		$data = array(
 				'customer_id' => $payment->getOrder()->getCustomerId(),
-				'order_number' => sdk\XMLParser::getNode($litleResponse, 'orderId'),
+				'order_number' => litle\sdk\XMLParser::getNode($litleResponse, 'orderId'),
 				'order_id' => $payment->getOrder()->getId(),
-				'affluence' => self::formatAffluence(sdk\XMLParser::getNode($litleResponse, 'affluence')),
+				'affluence' => self::formatAffluence(litle\sdk\XMLParser::getNode($litleResponse, 'affluence')),
 				'last' => $last4,
 				'order_amount' => self::formatAvailableBalance($payment->getAmountAuthorized()),
-				'affluence' => self::formatAffluence(sdk\XMLParser::getNode($litleResponse, 'affluence')),
-				'issuing_country' => sdk\XMLParser::getNode($litleResponse, 'issuerCountry'),
+				'affluence' => self::formatAffluence(litle\sdk\XMLParser::getNode($litleResponse, 'affluence')),
+				'issuing_country' => litle\sdk\XMLParser::getNode($litleResponse, 'issuerCountry'),
 				'prepaid_card_type' => self::formatPrepaidCardType(
-						sdk\XMLParser::getNode($litleResponse, 'prepaidCardType')),
-				'funding_source' => self::formatFundingSource(sdk\XMLParser::getNode($litleResponse, 'type')),
+						litle\sdk\XMLParser::getNode($litleResponse, 'prepaidCardType')),
+				'funding_source' => self::formatFundingSource(litle\sdk\XMLParser::getNode($litleResponse, 'type')),
 				'available_balance' => self::formatAvailableBalance(
-						sdk\XMLParser::getNode($litleResponse, 'availableBalance')),
-				'reloadable' => self::formatReloadable(sdk\XMLParser::getNode($litleResponse, 'reloadable'))
+						litle\sdk\XMLParser::getNode($litleResponse, 'availableBalance')),
+				'reloadable' => self::formatReloadable(litle\sdk\XMLParser::getNode($litleResponse, 'reloadable'))
 		);
 		Mage::getModel('palorus/insight')->setData($data)->save();
 	}

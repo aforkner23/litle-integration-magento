@@ -1,8 +1,10 @@
 <?php
+
+require_once realpath(__DIR__). '/../../../../../../vendor/autoload.php';
 //require_once ('Litle/LitleSDK/LitleOnline.php');
 //namespace litle\sdk;
 //use core\Mage\Payment\Model\Method\Mage_Payment_Model_Method_Cc;
-use litle\sdk;
+/*use litle\sdk;
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleOnlineRequest.php';
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleXmlMapper.php';
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/XmlParser.php';
@@ -16,6 +18,7 @@ include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/li
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/Transactions.php';
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/UrlMapper.php';
 include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/XmlFields.php';
+ * */
 class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 {
 
@@ -490,11 +493,11 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 	{
 		$this->accountUpdater($payment, $litleResponse);
 
-		$message = sdk\XmlParser::getAttribute($litleResponse, 'litleOnlineResponse', 'message');
+		$message = litle\sdk\XmlParser::getAttribute($litleResponse, 'litleOnlineResponse', 'message');
 		if ($message == 'Valid Format') {
 			$isSale = ($payment->getCcTransId() != null) ? false : true;
 			if (isset($litleResponse)) {
-				$litleResponseCode = sdk\XMLParser::getNode($litleResponse, 'response');
+				$litleResponseCode = litle\sdk\XMLParser::getNode($litleResponse, 'response');
 				if ($litleResponseCode != '000') {
 					if ($isSale) {
 						if(Mage::getStoreConfig('payment/CreditCard/debug_enable')) {
@@ -504,7 +507,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 						$orderId = $payment->getOrder()->getId();
 						$this->writeFailedTransactionToDatabase($customerId, null, $message, $litleResponse); //null order id because the order hasn't been created yet
 						
-						Mage::throwException("The order was not approved.  Please try again later or contact us.  For your reference, the transaction id is " . sdk\XMLParser::getNode($litleResponse, 'litleTxnId'));
+						Mage::throwException("The order was not approved.  Please try again later or contact us.  For your reference, the transaction id is " . litle\sdk\XMLParser::getNode($litleResponse, 'litleTxnId'));
 						
 					}		
 					else {
@@ -512,12 +515,12 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 					}
 				} else {
 					$payment->setStatus('Approved')
-						->setCcTransId(sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
-						->setLastTransId(sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
-						->setTransactionId(sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
+						->setCcTransId(litle\sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
+						->setLastTransId(litle\sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
+						->setTransactionId(litle\sdk\XMLParser::getNode($litleResponse, 'litleTxnId'))
 						->setIsTransactionClosed(0)
 						->setTransactionAdditionalInfo('additional_information',
-							sdk\XMLParser::getNode($litleResponse, 'message'));
+							litle\sdk\XMLParser::getNode($litleResponse, 'message'));
 				}
 				return true;
 			}
@@ -556,7 +559,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 				Mage::log("Can't use selected database " . $dbname, null, "litle.log");
 			}
 			$fullXml = mysql_real_escape_string($fullXml);
-			$litleTxnId = sdk\XMLParser::getNode($xmlDocument, 'litleTxnId');
+			$litleTxnId = litle\sdk\XMLParser::getNode($xmlDocument, 'litleTxnId');
 			$sql = "insert into litle_failed_transactions (customer_id, order_id, message, full_xml, litle_txn_id, active, transaction_timestamp, order_num) values (" . $customerId . ", " . $orderId . ", '" . $message . "', '" . $fullXml . "', '" . $litleTxnId . "', true, now()," . $orderNumber . ")";
 			$result = mysql_query($sql);
 			if(!$result) {
@@ -592,8 +595,8 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 	
 	public function handleResponseForNonSuccessfulBackendTransactions(Varien_Object $payment, $litleResponse, $litleResponseCode) {
 		$order = $payment->getOrder();
-		$litleMessage = sdk\XMLParser::getNode($litleResponse, 'message');
-		$litleTxnId = sdk\XMLParser::getNode($litleResponse, 'litleTxnId');
+		$litleMessage = litle\sdk\XMLParser::getNode($litleResponse, 'message');
+		$litleTxnId = litle\sdk\XMLParser::getNode($litleResponse, 'litleTxnId');
 		$customerId = $order->getData('customer_id');
 		$orderId = $order->getId();
 		
@@ -703,7 +706,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 
                 $hash_in = $this->generateAuthorizationHash($orderId, $amountToPass, $info, $payment);
 
-				$litleRequest = new sdk\LitleOnlineRequest();
+				$litleRequest = new litle\sdk\LitleOnlineRequest();
 				$litleResponse = $litleRequest->authorizationRequest($hash_in);
 				$this->processResponse($payment, $litleResponse);
 
@@ -791,7 +794,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 			}
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash, $merchantData);
-			$litleRequest = new sdk\LitleOnlineRequest();
+			$litleRequest = new litle\sdk\LitleOnlineRequest();
 
 			if ($isSale) {
 				$litleResponse = $litleRequest->saleRequest($hash_in);
@@ -827,7 +830,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 			);
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash, $merchantData);
-			$litleRequest = new sdk\LitleOnlineRequest();
+			$litleRequest = new litle\sdk\LitleOnlineRequest();
 			$litleResponse = $litleRequest->creditRequest($hash_in);
 		}
 		$this->processResponse($payment, $litleResponse);
@@ -854,7 +857,7 @@ class Litle_CreditCard_Model_PaymentLogic extends Mage_Payment_Model_Method_Cc
 			);
 			$merchantData = $this->merchantData($payment);
 			$hash_in = array_merge($hash, $merchantData);
-			$litleRequest = new sdk\LitleOnlineRequest();
+			$litleRequest = new litle\sdk\LitleOnlineRequest();
 
 			if (Mage::helper('creditcard')->isStateOfOrderEqualTo($order,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH)) {
