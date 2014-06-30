@@ -1,22 +1,22 @@
 <?php
-require_once realpath(__DIR__). '/../../../../../../vendor/autoload.php';
+//require_once realpath(__DIR__). '/../../../../../../vendor/autoload.php';
 //namespace litle\sdk;
-/*
+
 use litle\sdk;
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleOnlineRequest.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleXmlMapper.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/XmlParser.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/BatchRequest.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/Checker.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/Communication.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleOnline.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleRequest.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/LitleResponseProcessor.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/Obj2xml.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/Transactions.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/UrlMapper.php';
-include_once dirname(__FILE__) .'/../../../../../../vendor/litle/payments-sdk/litle/sdk/XmlFields.php';
- * */
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/LitleOnlineRequest.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/LitleXmlMapper.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/XmlParser.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/BatchRequest.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/Checker.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/Communication.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/LitleOnline.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/LitleRequest.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/LitleResponseProcessor.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/Obj2xml.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/Transactions.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/UrlMapper.php';
+include_once dirname(__FILE__) .'/../../../litle/payments-sdk/litle/sdk/XmlFields.php';
+
 class Litle_LEcheck_Model_PaymentLogic extends Mage_Payment_Model_Method_Abstract
 {
 	/**
