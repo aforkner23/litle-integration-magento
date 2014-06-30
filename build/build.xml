@@ -44,6 +44,7 @@
 			<exclude name="code/community/phpunit/**"/>
 			<exclude name="code/community/symfony/**"/>
 			<exclude name="code/community/autoload.php"/>
+			<exclude name="code/community/litle/payments-sdk/litle/sdk/Test/**" />
 			<include name="design/adminhtml/default/default/layout/litle.xml"/>
 			<include name="design/adminhtml/default/default/template/litle/**"/>
                         <include name="design/adminhtml/default/default/locale/**"/>
