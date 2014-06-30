@@ -9,7 +9,7 @@ This extension will allow you to accept payments through Litle & Co. on Magento.
 * Run the composer.phar, enter "php composer.phar install"
 * Set up WORKSPACE, enter "WORKSPACE=your_Litle_Integration_Path"
 * Set up magento environment
-* Run the build to generate tar file, enter "ant -f build/build.xml"
+* Run the build to generate .tgz file, enter "ant -f build/build.xml"
 * If shows TreeWalker error, go to your ANT_HOME/lib, Add those two jar files: Xalan.jar, serializer.jar
 * Merge the magento files into litle-integration-magento folder , select Merge All
 ## Setup
