@@ -22,7 +22,7 @@
 		<mkdir dir="${pathToFolderToSaveIn}"/>
 		<echo message="${basedir}"/>
 		<echo message="${pathToFolderToSaveIn}"/>
-		<echo message="${pathToLitleMagentoIntegrationFolder}"/>
+		<echo message="${pathToLitleMagentoIntegrationFolder}"/>    
 		<!-- create the package.xml -->
 		<builder 
 			packageVersion="${version}" 
@@ -32,7 +32,25 @@
 		
 		<!-- copy the source files -->
 		<copy todir="${pathToFolderToSaveIn}/app">
-			<fileset dir="${pathToLitleMagentoIntegrationFolder}/app"/>
+			<fileset dir="${pathToLitleMagentoIntegrationFolder}/app">
+                        <exclude name="locale/**"/>
+			<exclude name ="Mage.php"/>
+			<include name= "code/community/**"/>
+			<exclude name="code/community/bin/**"/>
+                        <exclude name="code/community/Cm/**"/>
+ 			<exclude name="code/community/composer/**"/>
+			<exclude name="code/community/Phoenix/**"/>
+			<exclude name="code/community/phpseclib/**"/>
+			<exclude name="code/community/phpunit/**"/>
+			<exclude name="code/community/symfony/**"/>
+			<exclude name="code/community/autoload.php"/>
+			<include name="design/adminhtml/default/default/layout/litle.xml"/>
+			<include name="design/adminhtml/default/default/template/litle/**"/>
+                        <include name="design/adminhtml/default/default/locale/**"/>
+                        <include name="design/frontend/base/default/layout/litlecreditcard.xml"/>
+                        <include name="design/frontend/base/default/template/litle/**"/>
+			<include name="etc/modules/Litle_All.xml"/>
+			</fileset>
 		</copy>
 		
 		<!-- Tar gz it up -->
@@ -75,7 +93,7 @@
 
 			<batchtest todir="reports/selenium">
 				<fileset dir="test/output">
-					<include name="**/*Tests.class" /> 
+					<include name="**/BackendCCTransactionsTests.class" /> 
 				</fileset>
 			</batchtest>
 		</junit>
